@@ -24,4 +24,8 @@ public class FeatureSet {
                 feature -> feature.getFeature().equals(name)
         ).findFirst();
     }
+
+    public List<Feature> getFeatures() {
+        return features;
+    }
 }

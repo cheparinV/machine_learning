@@ -1,5 +1,6 @@
 package ru.kpfu.univer.service.models;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -8,14 +9,17 @@ import java.util.Map;
 public class Feature {
     private String feature;
     private Map<Category, Integer> map;
+    private Integer allCount;
 
     public Feature(String feature) {
         this.feature = feature;
+        this.map = new HashMap<>();
     }
 
     public Feature(String feature, Map<Category, Integer> map) {
         this.feature = feature;
         this.map = map;
+        allCount = 0;
     }
 
     public void addCategory(Category category) {
@@ -27,6 +31,7 @@ public class Feature {
                 category,
                 this.map.get(category) + 1
         );
+        this.allCount++;
     }
 
     public String getFeature() {
@@ -35,6 +40,10 @@ public class Feature {
 
     public Map<Category, Integer> getMap() {
         return map;
+    }
+
+    public Integer getAllCount() {
+        return allCount;
     }
 
     @Override

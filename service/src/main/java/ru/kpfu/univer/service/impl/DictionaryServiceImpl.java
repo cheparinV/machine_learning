@@ -9,10 +9,7 @@ import ru.kpfu.univer.service.models.Category;
 import ru.kpfu.univer.service.models.Feature;
 import ru.kpfu.univer.service.models.FeatureSet;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -22,6 +19,8 @@ import java.util.regex.Pattern;
 public class DictionaryServiceImpl implements DictionaryService {
 
     private final CSVReader csvReader;
+    private FeatureSet featureSet;
+    private List<Category> categories;
 
     @Autowired
     public DictionaryServiceImpl(CSVReader csvReader) {
@@ -35,16 +34,20 @@ public class DictionaryServiceImpl implements DictionaryService {
 
         final Category hamCategory = new Category("ham", ham.size());
         final Category spamCategory = new Category("spam", spam.size());
+        this.categories = new ArrayList<>();
+        this.categories.add(hamCategory);
+        this.categories.add(spamCategory);
+
         final HashMap<Category, Integer> categoryMap = new HashMap<>();
         categoryMap.put(hamCategory, 0);
         categoryMap.put(spamCategory, 0);
 
         final Pattern pattern = Pattern.compile("\\b(\\w*)\\b");
-        final FeatureSet set = new FeatureSet(new ArrayList<>());
+        this.featureSet = new FeatureSet(new ArrayList<>());
         for (String string : ham) {
             final String[] split = string.split("[,�_#;\":\\\\.!?\\s+]+");
             for (String s : split) {
-                final Optional<Feature> featureOpt = set.findFeature(s);
+                final Optional<Feature> featureOpt = this.featureSet.findFeature(s);
                 Feature feature;
                 if (!featureOpt.isPresent()) {
                     feature = new Feature(s, categoryMap);
@@ -53,8 +56,16 @@ public class DictionaryServiceImpl implements DictionaryService {
                     featureOpt.get().incrementCategory(hamCategory);
                     feature = featureOpt.get();
                 }
-                set.addFeature(feature);
+                this.featureSet.addFeature(feature);
             }
         }
+    }
+
+    public FeatureSet getFeatureSet() {
+        return featureSet;
+    }
+
+    public List<Category> getCategories() {
+        return categories;
     }
 }

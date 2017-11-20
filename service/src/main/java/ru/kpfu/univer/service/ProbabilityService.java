@@ -8,11 +8,8 @@ import java.util.List;
 /**
  * @author Vladislav Cheparin (vladislav.cheparin.gdc@ts.fujitsu.com)
  */
-public interface DictionaryService {
+public interface ProbabilityService {
 
-    public void generateDictionary();
+    void printWordsProbe(List<Category> categories, FeatureSet featureSet);
 
-    public FeatureSet getFeatureSet();
-
-    public List<Category> getCategories();
 }
