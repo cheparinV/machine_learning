@@ -22,33 +22,41 @@ public class ProbabilityServiceImpl implements ProbabilityService {
     private List<WordProbability> words;
 
     @Override
-    public void printWordsProbe(List<Category> categories, FeatureSet featureSet) {
+    public void countWordsProbe(List<Category> categories, FeatureSet featureSet) {
         words = new ArrayList<>();
-        for (Category category : categories) {
-            if (category.getName().equals("spam")) {
-                continue;
-            }
-            final List<Feature> features = featureSet.getFeatures();
-            for (Feature feature : features) {
-                final Map<Category, Integer> map = feature.getMap();
-                final Integer countInGood = map.get(category);
-                final Double probGood = (double) countInGood / category.getCount();
-                final Double probWGood = (w * coef + countInGood * probGood) / (countInGood + w);
-                words.add(
-                WordProbability.WordProbabilityBuilder.aWordProbability()
-                        .withWord(feature.getFeature())
-                        .withProbGood(probGood)
-                        .withProbWGood(probWGood)
-                        .withCountGoodWord(countInGood)
-                        .withCountWord(feature.getAllCount())
-                        .withCountGood(category.getCount())
-                        .build()
-                );
-
-            }
+        final List<Feature> features = featureSet.getFeatures();
+        for (Feature feature : features) {
+            words.add(this.probByFeature(feature, categories));
         }
         for (WordProbability word : words) {
             System.out.println(word);
         }
+    }
+
+    public WordProbability probByFeature(Feature feature, List<Category> categories) {
+        final Category spam = categories.stream().filter(category -> category.getName().equals("spam")).findFirst().get();
+        final Category ham = categories.stream().filter(category -> category.getName().equals("ham")).findFirst().get();
+        final Map<Category, Integer> map = feature.getMap();
+        final Integer countInGood = map.get(ham);
+        final Integer countInBad = map.get(spam);
+        final Double probGood = (double) countInGood / ham.getCount();
+        final Double probWGood = (w * coef + countInGood * probGood) / ((double) countInGood + w);
+        final Double probBad = (double) countInBad / spam.getCount();
+        final Double probWBad = (w * coef + countInBad * probBad) / ((double) countInBad + w);
+
+        return new WordProbability()
+                .setWord(feature.getFeature())
+                .setProbGood(probGood)
+                .setProbWGood(probWGood)
+                .setProbBad(probBad)
+                .setProbWBad(probWBad)
+                .setCountGoodWord(countInGood)
+                .setCountWord(feature.getAllCount())
+                .setCountGood(ham.getCount());
+    }
+
+    @Override
+    public List<WordProbability> getWordProb() {
+        return words;
     }
 }

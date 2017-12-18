@@ -5,15 +5,15 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import ru.kpfu.univer.service.CSVReader;
-import ru.kpfu.univer.service.DictionaryService;
-import ru.kpfu.univer.service.ProbabilityService;
+import ru.kpfu.univer.service.*;
 import ru.kpfu.univer.service.models.Category;
 import ru.kpfu.univer.service.models.FeatureSet;
+import ru.kpfu.univer.service.models.WordProbability;
 import ru.kpfu.univer.webapp.Application;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -32,6 +32,12 @@ public class DictionaryServiceImplTest {
     @Autowired
     ProbabilityService probabilityService;
 
+    @Autowired
+    BayesService bayesService;
+
+    @Autowired
+    FisherService fisherService;
+
     @Test
     public void generateDictionaryTest(){
         final FileInputStream stream;
@@ -45,7 +51,12 @@ public class DictionaryServiceImplTest {
         final List<Category> categories = dictionaryService.getCategories();
         final FeatureSet featureSet = dictionaryService.getFeatureSet();
 
-        probabilityService.printWordsProbe(categories, featureSet);
+        probabilityService.countWordsProbe(categories, featureSet);
+        final List<WordProbability> wordProb = probabilityService.getWordProb();
+        final List<String> strings = Arrays.asList("Want", "Ring", "explicit ");
+        bayesService.probForList(strings, wordProb, categories);
+        fisherService.probForList(strings, wordProb, categories);
+
         System.out.println();
     }
 }

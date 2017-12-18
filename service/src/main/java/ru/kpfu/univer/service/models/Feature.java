@@ -18,7 +18,7 @@ public class Feature {
 
     public Feature(String feature, Map<Category, Integer> map) {
         this.feature = feature;
-        this.map = map;
+        this.map = new HashMap<>(map);
         allCount = 0;
     }
 

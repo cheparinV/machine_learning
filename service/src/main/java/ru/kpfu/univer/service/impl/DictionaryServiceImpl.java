@@ -38,27 +38,40 @@ public class DictionaryServiceImpl implements DictionaryService {
         this.categories.add(hamCategory);
         this.categories.add(spamCategory);
 
-        final HashMap<Category, Integer> categoryMap = new HashMap<>();
+        final Map<Category, Integer> categoryMap = new HashMap<>();
         categoryMap.put(hamCategory, 0);
         categoryMap.put(spamCategory, 0);
 
         final Pattern pattern = Pattern.compile("\\b(\\w*)\\b");
-        this.featureSet = new FeatureSet(new ArrayList<>());
-        for (String string : ham) {
-            final String[] split = string.split("[,�_#;\":\\\\.!?\\s+]+");
-            for (String s : split) {
-                final Optional<Feature> featureOpt = this.featureSet.findFeature(s);
-                Feature feature;
-                if (!featureOpt.isPresent()) {
-                    feature = new Feature(s, categoryMap);
-                    feature.incrementCategory(hamCategory);
-                } else {
-                    featureOpt.get().incrementCategory(hamCategory);
-                    feature = featureOpt.get();
+        final ArrayList<Set<String>> sets = new ArrayList<>();
+        sets.add(ham);
+        sets.add(spam);
+        this.featureSet = this.iterString(sets, categoryMap, hamCategory, spamCategory);
+
+    }
+
+    private FeatureSet iterString(List<Set<String>> categories, Map<Category, Integer> categoryMap, Category hamCategory,  Category spamCategory) {
+        final FeatureSet featureSet = new FeatureSet(new ArrayList<>());
+        Category current = hamCategory;
+        for (Set<String> strings : categories) {
+            for (String string : strings) {
+                final String[] split = string.split("[,�_#;\":\\\\.!?\\s\\d+]+");
+                for (String s : split) {
+                    final Optional<Feature> featureOpt = featureSet.findFeature(s);
+                    Feature feature;
+                    if (!featureOpt.isPresent()) {
+                        feature = new Feature(s, categoryMap);
+                        feature.incrementCategory(current);
+                    } else {
+                        featureOpt.get().incrementCategory(current);
+                        feature = featureOpt.get();
+                    }
+                    featureSet.addFeature(feature);
                 }
-                this.featureSet.addFeature(feature);
             }
+            current = spamCategory;
         }
+        return featureSet;
     }
 
     public FeatureSet getFeatureSet() {
