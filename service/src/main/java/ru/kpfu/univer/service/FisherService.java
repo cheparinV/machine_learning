@@ -10,5 +10,5 @@ import java.util.List;
  */
 public interface FisherService {
 
-    void probForList(List<String> words, List<WordProbability> wordProbabilitiesm, List<Category> categories);
+    List<String> probForList(List<String> words, List<WordProbability> wordProbabilitiesm, List<Category> categories);
 }

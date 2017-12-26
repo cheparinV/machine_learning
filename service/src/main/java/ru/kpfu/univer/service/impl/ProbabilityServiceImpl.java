@@ -43,6 +43,9 @@ public class ProbabilityServiceImpl implements ProbabilityService {
         final Double probWGood = (w * coef + countInGood * probGood) / ((double) countInGood + w);
         final Double probBad = (double) countInBad / spam.getCount();
         final Double probWBad = (w * coef + countInBad * probBad) / ((double) countInBad + w);
+        final int allCount = ham.getCount() + spam.getCount();
+        final double fishGood = (double) countInGood / allCount;
+        final double fishBad = (double) countInBad / allCount;
 
         return new WordProbability()
                 .setWord(feature.getFeature())
@@ -52,7 +55,9 @@ public class ProbabilityServiceImpl implements ProbabilityService {
                 .setProbWBad(probWBad)
                 .setCountGoodWord(countInGood)
                 .setCountWord(feature.getAllCount())
-                .setCountGood(ham.getCount());
+                .setCountGood(ham.getCount())
+                .setFishProbGood(fishGood)
+                .setFishProbBad(fishBad);
     }
 
     @Override

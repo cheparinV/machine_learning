@@ -42,7 +42,7 @@ public class DictionaryServiceImplTest {
     public void generateDictionaryTest(){
         final FileInputStream stream;
         try {
-            stream = new FileInputStream("C:\\Users\\Vladislav\\Documents\\spam.csv");
+            stream = new FileInputStream("C:\\Users\\ASUS-PC\\Downloads\\spam (1).csv");
         } catch (FileNotFoundException e) {
             throw new IllegalStateException(e);
         }

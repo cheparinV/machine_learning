@@ -13,6 +13,8 @@ public class WordProbability {
     private Integer countGoodWord;
     private Integer countWord;
     private Integer countGood;
+    private Double fishProbGood;
+    private Double fishProbBad;
 
     public String getWord() {
         return word;
@@ -86,6 +88,24 @@ public class WordProbability {
         return this;
     }
 
+    public Double getFishProbGood() {
+        return fishProbGood;
+    }
+
+    public WordProbability setFishProbGood(Double fishProbGood) {
+        this.fishProbGood = fishProbGood;
+        return this;
+    }
+
+    public Double getFishProbBad() {
+        return fishProbBad;
+    }
+
+    public WordProbability setFishProbBad(Double fishProbBad) {
+        this.fishProbBad = fishProbBad;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "WordProbability{" +
@@ -97,6 +117,8 @@ public class WordProbability {
                 ", countGoodWord=" + countGoodWord +
                 ", countWord=" + countWord +
                 ", countGood=" + countGood +
+                ", fishProbGood=" + fishProbGood +
+                ", fishProbBad=" + fishProbBad +
                 '}';
     }
 }
